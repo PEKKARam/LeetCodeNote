@@ -1,0 +1,629 @@
+# LeetCode Hot 100
+
+## 1. 两数之和
+
+### 问题描述
+
+给定一个整数数组 `nums` 和一个整数目标值 `target`，请你在该数组中找出 **和为目标值** *`target`*  的那 **两个** 整数，并返回它们的数组下标。
+
+你可以假设每种输入只会对应一个答案，并且你不能使用两次相同的元素。
+
+你可以按任意顺序返回答案。
+
+**示例 1：**
+
+<pre><strong>输入：</strong>nums = [2,7,11,15], target = 9
+<strong>输出：</strong>[0,1]
+<strong>解释：</strong>因为 nums[0] + nums[1] == 9 ，返回 [0, 1] 。
+</pre>
+
+**示例 2：**
+
+<pre><strong>输入：</strong>nums = [3,2,4], target = 6
+<strong>输出：</strong>[1,2]
+</pre>
+
+**示例 3：**
+
+<pre><strong>输入：</strong>nums = [3,3], target = 6
+<strong>输出：</strong>[0,1]
+</pre>
+
+**提示：**
+
+* `2 <= nums.length <= 10<sup>4</sup>`
+* `-10<sup>9</sup> <= nums[i] <= 10<sup>9</sup>`
+* `-10<sup>9</sup> <= target <= 10<sup>9</sup>`
+
+### 算法思想
+
+`哈希表`：键值对
+
+建立以数组元素为`key`，数组下表为`value`的对应关系，实现O(1)的查找。
+
+1）最简单：一维数组，长度足以包括范围内的所有num；浪费缓存；大量空元素；
+
+2）采用字典。
+
+### 实现
+
+#### C++
+
+使用STL库中的`unordered_map`
+
+``` c++
+    unordered_map<int, int> hashtable;
+```
+
+#### Python3
+
+使用`python`的`dict`
+
+``` python
+    hashtable = dict()
+    for index, num in enumerate(nums):
+        ......
+```
+
+`enumerate()`：可同时读取列表的下标和元素，遍历时常用
+
+## 9. 回文数
+
+### 问题描述
+
+给你一个整数 x ，如果 x 是一个回文整数，返回 true ；否则，返回 false 。
+
+回文数是指正序（从左向右）和倒序（从右向左）读都是一样的整数。
+
+例如，121 是回文，而 123 不是。
+
+示例 1：
+
+输入：x = 121
+输出：true
+
+示例 2：
+
+输入：x = -121
+输出：false
+解释：从左向右读, 为 -121 。 从右向左读, 为 121- 。因此它不是一个回文数。
+
+示例 3：
+
+输入：x = 10
+输出：false
+解释：从右向左读, 为 01 。因此它不是一个回文数。
+
+提示：
+
+`-2^31 <= x <= 2^31 - 1`
+
+### 算法思想
+
+1）直接计算逆转数字：可能出现爆int
+2）可以计算数字一半部分逆转后的大小，若与另一半相同（原数字偶数位）或除10后相同（奇数位）
+
+计算循环终止条件应为计算逆转数字大于等于剩余数字大小
+
+![alt text](/img/RevertNumber.png)
+
+### 实现
+
+#### Python3
+
+整除符号是`//`
+`/`可能产生浮点数
+
+## 49. 字母异位词分组
+
+### 问题描述
+
+给你一个字符串数组，请你将 字母异位词 组合在一起。可以按任意顺序返回结果列表。
+
+示例 1:
+
+输入: `strs = ["eat", "tea", "tan", "ate", "nat", "bat"]`
+
+输出: `[["bat"],["nat","tan"],["ate","eat","tea"]]`
+
+解释：
+
+在 strs 中没有字符串可以通过重新排列来形成 "bat"。
+字符串 "nat" 和 "tan" 是字母异位词，因为它们可以重新排列以形成彼此。
+字符串 "ate" ，"eat" 和 "tea" 是字母异位词，因为它们可以重新排列以形成彼此。
+示例 2:
+
+输入: `strs = [""]`
+
+输出: `[[""]]`
+
+示例 3:
+
+输入: `strs = ["a"]`
+
+输出: `[["a"]]`
+
+提示：
+
+`1 <= strs.length <= 104`
+`0 <= strs[i].length <= 100`
+strs[i] 仅包含小写字母
+
+### 算法思想
+
+`哈希表`
+相同字母，不同顺序排列构成的单词。
+用相同字母的 *顺序排列* 得到的字符串作为键，由这些字母组成的单词组成`list`，构造字典
+
+### 实现
+
+#### C++
+
+STL
+list是双向链表，只能顺序访问，方便插入元素
+vector是动态数组，可随机访问，方便频繁访问
+
+```c++
+vector<vector<string>> groupAnagrams(vector<string>& strs) {
+    unordered_map<string, vector<string>> map;
+    for(string& str: strs){
+        string key = str;
+        sort(key.begin(), key.end());
+        map[key].emplace_back(str);
+    }
+
+    vector<vector<string>> ans;
+    for(auto i = map.begin(); i != map.end(); ++i){
+        ans.emplace_back(i->second);
+    }
+    return ans;
+}
+```
+
+`push_back` 和 `emplace_back` 都是 C++ STL 容器（如 `vector`、`list`、`deque`）中用于**在容器尾部添加元素的成员函数**，核心差异在于：
+
+* `push_back`：先构造元素（或拷贝 / 移动已有元素），再将元素拷贝 / 移动到容器中。
+* `emplace_back`：直接在容器的内存空间中就地构造元素，避免额外的拷贝 / 移动操作。
+
+#### Python3
+
+1）手写一个字典，如果没有键则加入新的键
+
+```python
+from typing import List
+
+def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
+    map = {}
+    for str in strs:
+        key = "".join(sorted(str))
+        if key not in map:
+            map[key] = []
+        map[key].append(str)
+        
+    return list(map.values())
+```
+
+2）使用python库，`collections`，`defaultdict`
+
+```python
+from typing import List
+import collections
+
+# 步骤1：创建默认值为列表的字典，用于存储「特征键-异位词列表」的映射
+mp = collections.defaultdict(list)
+
+# 步骤2：遍历每个字符串，分组处理
+for st in strs:
+    # 关键：生成字母异位词的「唯一特征键」
+    # sorted(st) 会把字符串按字符排序（比如 "eat" → ['a','e','t']）
+    # "".join(...) 把排序后的列表转回字符串（['a','e','t'] → "aet"）
+    key = "".join(sorted(st))
+    # 把当前字符串添加到对应特征键的列表中
+    mp[key].append(st)
+
+# 步骤3：提取字典的所有值（即分组后的列表），转为普通列表返回
+return list(mp.values())
+```
+
+## 128. 最长连续子序列
+
+### 问题描述
+
+给定一个未排序的整数数组 nums ，找出数字连续的最长序列（不要求序列元素在原数组中连续）的长度。
+
+请你设计并实现时间复杂度为 O(n) 的算法解决此问题。
+
+示例 1：
+
+输入：nums = [100,4,200,1,3,2]
+
+输出：4
+
+解释：最长数字连续序列是 [1, 2, 3, 4]。它的长度为 4。
+
+示例 2：
+
+输入：nums = [0,3,7,2,5,8,4,6,0,1]
+
+输出：9
+
+示例 3：
+
+输入：nums = [1,0,1,2]
+
+输出：3 
+
+提示：
+
+`0 <= nums.length <= 105`
+`-109 <= nums[i] <= 109`
+
+### 算法思想
+
+1) 排序 + 去重 ：时间复杂度为O(nlogn)
+
+使用 STL 库带有的`sort`、`erase`、`unique`函数
+
+```c++
+    vector<int> h = nums;
+    sort(h.begin(), h.end());
+    h.erase(unique(h.begin(), h.end()), h.end());
+```
+
+2) 基于数组建立哈希表，遍历数组，以数组中的每个元素为起点`+1`，在哈希表中查找后续的数字
+
+
+
+直接遍历数组有可能导致时间复杂度为O(n^2)
+
+如果从`x`开始计算连续序列，那么从`x+1`开始的序列长度肯定不会大于`x`开始的，因此遍历时应该查找`x-1`是否存在
+
+去重采用`set`, 自动去重
+
+```c++
+    unordered_set<int> num_set;
+    for(int i = 0; i < nums.size(); i++)
+        num_set.insert(nums[i]);
+
+    int max = 0;
+    int temp = 0;
+    for(auto it = num_set.begin(); it != num_set.end(); it++){
+        int x = *it;
+        if(num_set.find(x - 1) == num_set.end()){
+            temp++;
+            while(num_set.find(x+1) != num_set.end()){
+                temp++;
+                x++;
+            }
+            if(max < temp)
+                max = temp;
+            temp  = 0;
+        }
+    }
+```
+
+Python实现，`set.add()`插入，无序不重复集合
+
+```python
+def longestConsecutive(self, nums: List[int]) -> int:
+    numset = set()
+    for i in nums:
+        numset.add(i)
+    
+    max: int = 0
+    temp: int = 0
+    for x in numset:
+        if x - 1 not in numset:
+            temp += 1
+            while x + 1 in numset:
+                temp += 1
+                x += 1
+            if max < temp:
+                max = temp
+            temp = 0
+    
+    return max
+```
+
+## 283. 移动零
+
+### 问题描述
+
+给定一个数组 nums，编写一个函数将所有 0 移动到数组的末尾，同时保持非零元素的相对顺序。
+
+请注意 ，必须在不复制数组的情况下原地对数组进行操作。
+
+示例 1:
+
+输入: nums = [0,1,0,3,12]
+
+输出: [1,3,12,0,0]
+
+示例 2:
+
+输入: nums = [0]
+
+输出: [0]
+
+提示:
+
+`1 <= nums.length <= 104`
+
+`-231 <= nums[i] <= 231 - 1`
+
+### 算法思想
+
+`双指针`：
+
+1) 左指针指向第一个0元素，右指针从左指针开始向右寻找第一个非0元素，交换左右指针指向的元素（！！！注意判断指针越界）
+最坏情况下时间复杂度可能达到O(n^2)
+
+2) 右指针不断向后移动，找出非零元素，与左指针交换，左指针左边全是非零元素，右指针指向0元素，相当于把所有的非零元素往前移动
+
+```python
+    left: int = 0
+    right: int = 0
+    n: int = len(nums)
+
+    while right < n:
+        if nums[right] != 0:
+            # python 交换元素不用swap，可直接使用 = 
+            nums[left], nums[right] = nums[right], nums[left]
+            left += 1
+        right += 1
+```
+
+## 11. 盛最多水的容器
+
+![alt text](/img/MaxWater.png)
+
+### 算法思想
+
+左指针从头开始，右指针从尾开始，每次只移动二者之中高度小的那个指针
+
+## 15.三数之和
+
+### 题目描述
+
+给你一个整数数组 nums ，判断是否存在三元组 [nums[i], nums[j], nums[k]] 满足 i != j、i != k 且 j != k ，同时还满足 nums[i] + nums[j] + nums[k] == 0 。请你返回所有和为 0 且不重复的三元组。
+
+注意：答案中不可以包含重复的三元组。
+
+示例 1：
+
+输入：nums = [-1,0,1,2,-1,-4]
+
+输出：[[-1,-1,2],[-1,0,1]]
+
+解释：
+
+```nums[0] + nums[1] + nums[2] = (-1) + 0 + 1 = 0 。```
+```nums[1] + nums[2] + nums[4] = 0 + 1 + (-1) = 0 。```
+```nums[0] + nums[3] + nums[4] = (-1) + 2 + (-1) = 0 。```
+
+不同的三元组是 [-1,0,1] 和 [-1,-1,2] 。
+
+注意，输出的顺序和三元组的顺序并不重要。
+
+### 算法思想
+
+1) 最简单的想法是三重循环，但是会有很多重复
+2) a + b + c = 0, 先排序再遍历保证a < b < c, 可以减少重复
+3) a是从小到大，b始终大于a，则b是递增的，要保持和为零，c应该减小，则c可以从大到小遍历。
+4) 并且a的遍历到相邻元素相等的情况，该结果之前已经遍历过，应该直接跳过
+
+```c++
+    vector<vector<int>> ans;
+    vector<int> n = nums;
+    int len = nums.size();
+    sort(n.begin(), n.end());
+    
+    for(int a = 0; a < len; a++){
+        if(a > 0 && n[a] == n[a-1])
+            continue;
+        
+        int target = - n[a];
+        int c = len - 1;
+        for(int b = a + 1; b < len; b++){
+            if(b > a + 1 && n[b] == n[b-1])
+                continue;
+            
+            // c 递减
+            while(b < c && n[b] + n[c] > target)
+                c--;
+
+            if(b == c)
+                break;
+
+            if(n[b] + n[c] == target)
+                ans.push_back({n[a], n[b], n[c]});
+        }
+    }
+```
+
+```python
+def threeSum(self, nums: list[int]) -> list[list[int]]:
+    n = len(nums)
+    # 定义列表
+    ans = list()
+    # 排序函数
+    nums.sort()
+
+    # a 从0 ~ n-1
+    for a in range(n):
+        if a > 0 and nums[a-1] == nums[a]:
+            continue
+        
+        c = n - 1
+        target = - nums[a]
+        # b 从 a+1 ~ n-1
+        for b in range(a+1, n):
+            if b > a + 1 and nums[b] == nums[b-1]:
+                continue
+            
+            while b < c and nums[b] + nums[c] > target:
+                c -= 1
+            
+            if b == c:
+                break
+            
+            # 列表插入与C++不同，使用append，中括号[]
+            if nums[b] + nums[c] == target:
+                ans.append([nums[a], nums[b], nums[c]])
+    
+    return ans
+```
+
+## 42.接雨水
+
+### 题目描述
+
+给定 n 个非负整数表示每个宽度为 1 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。
+
+![alt text](/img/HoldRain.png)
+
+### 算法思想
+
+1) 动态规划
+
+接雨水的水位最高不会超过最高的柱子，但直接遍历肯定会超过
+
+可以设计两个数组，`leftmax`和`rightmax`，用来记录每个位置（包含自身）往左最高的高度，往右最高的高度，分别以正序和逆序遍历一遍`height`数组，然后将找两个数组的更小值，减去每个位置上的`height`就可得到雨水的高度
+
+![alt text](/img/dpRain.png)
+
+```c++
+int trap(vector<int>& height) {
+    int n = height.size();
+    if(n == 0)
+        return 0;
+
+    int leftmax[n];
+    int rightmax[n];
+
+    leftmax[0] = height[0];
+    for(int i = 1; i < n; i++)
+        leftmax[i] = max(leftmax[i - 1], height[i]);
+    
+    rightmax[n - 1] = height[n - 1];
+    for(int i = n - 2; i >= 0; i --)
+        rightmax[i] = max(rightmax[i + 1], height[i]);
+
+    int sum = 0;
+    for(int i = 0; i < n; i ++){
+        sum += min(leftmax[i], rightmax[i]) - height[i];
+    }
+    return sum;
+}
+```
+
+2) 单调栈
+
+`单调栈（Monotone Stack）`：一种特殊的栈。在栈的「先进后出」规则基础上，要求「从 栈顶 到 栈底 的元素是单调递增（或者单调递减）」。其中满足从栈顶到栈底的元素是单调递增的栈，叫做「单调递增栈」。满足从栈顶到栈底的元素是单调递减的栈，叫做「单调递减栈」。
+
+- 它常用于在 `O(n)` 时间内求解数组中**某元素左右两侧的第一个更大或更小的元素**。
+
+```python
+def trap(self, height: List[int]) -> int:
+    sum = 0
+    stack = list() # stack存放height的索引
+    n = len(height)
+
+    for i, h in enumerate(height):
+        # 从栈底（button）到栈顶（top）递增，每次有元素大于top，弹栈
+        while stack and h > height[stack[-1]]:
+            top = stack.pop()
+            if not stack:
+                break
+            left = stack[-1]
+            currwidth = i - left - 1
+            currheight = min(height[left], height[i]) - height[top]
+            sum += currheight * currwidth
+        stack.append(i)
+    
+    return sum
+```
+
+## 3.无重复字符的最长子串
+
+### 问题描述
+
+给定一个字符串 s ，请你找出其中不含有重复字符的 最长 子串 的长度。
+
+示例 1:
+
+输入: s = "abcabcbb"
+
+输出: 3 
+
+    解释: 因为无重复字符的最长子串是 "abc"，所以其长度为 3。注意 "bca" 和 "cab" 也是正确答案。
+
+示例 2:
+
+输入: s = "bbbbb"
+
+输出: 1
+
+    解释: 因为无重复字符的最长子串是 "b"，所以其长度为 1。
+
+示例 3:
+
+输入: s = "pwwkew"
+
+输出: 3
+
+    解释: 因为无重复字符的最长子串是 "wke"，所以其长度为 3。
+    
+    请注意，你的答案必须是 子串 的长度，"pwke" 是一个子序列，不是子串。
+
+### 算法思想
+
+1) 动态规划
+
+使用一个cnt数组，cnt[i]记录s中，以位置i结尾无重复字符的最长子串的长度
+
+从位置i往前遍历，因为以s[i]结尾的最长子串长度不会超过cnt[i-1]+1，因此最多遍历步数为cnt[i-1]，更新cnt规则：
+- 若没重复，遍历完了以i-1结尾的最长子串，`cnt[i] = cnt[i-1] + 1`
+- 若有重复，遍历到下标j发现重复，则以s[i]结尾的 `cnt[i] = i - j`
+
+结果：输出cnt数组最大值
+
+```c++
+int lengthOfLongestSubstring(string s) {
+    int n = s.size();
+    if(n == 0)
+        return 0;
+    
+    // 初始化cnt数组
+    vector<int> cnt(n, 1);
+
+    for(int i = 1; i < n; i++)
+    {
+        int j = i - 1;
+        int temp = cnt[i - 1];
+        while(j >= i - temp)
+        {
+            if(s[j] == s[i]){
+                cnt[i] = i - j;
+                break;
+            }
+                
+            j--;
+        }
+            
+        if(j < i - temp)
+            cnt[i] = cnt[i - 1] + 1;
+
+    }
+    int max = 1;
+    for(int i = 1; i < n; i++)
+        if(max < cnt[i])
+            max = cnt[i];
+    
+    return max;
+}
+```
+
+2) 滑动窗口
+
+
